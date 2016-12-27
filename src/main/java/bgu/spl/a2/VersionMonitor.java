@@ -17,6 +17,7 @@ package bgu.spl.a2;
  * methods
  */
 public class VersionMonitor {
+    public int version;
 
     public int getVersion() {
         //TODO: replace method body with real implementation
