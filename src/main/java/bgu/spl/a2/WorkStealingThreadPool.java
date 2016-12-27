@@ -71,9 +71,13 @@ public class WorkStealingThreadPool {
      * shutdown the queue is itself a processor of this queue
      */
     public void shutdown() throws InterruptedException {
-            for(Thread t1: threads) {
-                t1.interrupt();
-            }
+        for(Thread t1: threads){
+            if(t1.getId()==t1.currentThread().getId())
+                throw new UnsupportedOperationException("A Processor can't shutdown!");
+        }
+        for(Thread t1: threads){
+            t1.interrupt();
+        }
             for(Thread t1: threads){
                 t1.join();
             }
@@ -83,8 +87,8 @@ public class WorkStealingThreadPool {
      * start the threads belongs to this thread pool
      */
     public void start() {
-        for(Thread t:threads){
-            t.start();
+        for(Thread t1:threads){
+            t1.start();
         }
     }
 
