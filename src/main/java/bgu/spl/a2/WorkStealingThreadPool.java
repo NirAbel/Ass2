@@ -83,8 +83,9 @@ public class WorkStealingThreadPool {
      * start the threads belongs to this thread pool
      */
     public void start() {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        for(Thread t:threads){
+            t.start();
+        }
     }
 
 }
