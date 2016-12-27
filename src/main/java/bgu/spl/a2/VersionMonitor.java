@@ -19,8 +19,6 @@ package bgu.spl.a2;
 public class VersionMonitor {
     public int version;
 
-    public int version;
-
     public int getVersion() {
         //TODO: replace method body with real implementation
         throw new UnsupportedOperationException("Not Implemented Yet.");
