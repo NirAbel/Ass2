@@ -71,8 +71,12 @@ public class WorkStealingThreadPool {
      * shutdown the queue is itself a processor of this queue
      */
     public void shutdown() throws InterruptedException {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+            for(Thread t1: threads) {
+                t1.interrupt();
+            }
+            for(Thread t1: threads){
+                t1.join();
+            }
     }
 
     /**
