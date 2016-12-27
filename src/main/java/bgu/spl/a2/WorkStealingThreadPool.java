@@ -1,4 +1,6 @@
 package bgu.spl.a2;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.ArrayList;
 
 /**
  * represents a work stealing thread pool - to understand what this class does
@@ -24,9 +26,24 @@ public class WorkStealingThreadPool {
      * @param nthreads the number of threads that should be started by this
      * thread pool
      */
+
+    ArrayList<ConcurrentLinkedDeque<Task<?>>> tasksQueues;
+    private ArrayList<Processor> processors;
+    private ArrayList<Thread> threads;
+    private VersionMonitor versionMonitor;
+    private int nthreads;
+
     public WorkStealingThreadPool(int nthreads) {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        this.nthreads=nthreads;
+        processors = new ArrayList<Processor>();
+        versionMonitor = new VersionMonitor();
+        threads = new ArrayList<Thread>();
+        tasksQueues = new ArrayList<ConcurrentLinkedDeque<Task<?>>>();
+        for(int i=0; i < nthreads; i++){
+            processors.add(new Processor(i,this));
+            tasksQueues.add(new ConcurrentLinkedDeque<Task<?>>());
+            threads.add(new Thread(processors.get(i)));
+        }
     }
 
     /**
