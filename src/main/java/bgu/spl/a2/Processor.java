@@ -47,4 +47,14 @@ public class Processor implements Runnable {
         throw new UnsupportedOperationException("Not Implemented Yet.");
     }
 
+    WorkStealingThreadPool getPool() {
+        return pool;
+    }
+
+    public LinkedBlockingDeque getTasks(){
+        return tasksQueues;
+    }
+
 }
+
+
