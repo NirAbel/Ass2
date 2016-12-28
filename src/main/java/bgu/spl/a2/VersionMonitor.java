@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VersionMonitor {
     private AtomicInteger versionNumber=new AtomicInteger(0);
+    public int version;
 
     public int getVersion() {
         return versionNumber.get();
