@@ -83,9 +83,8 @@ public class WorkStealingThreadPool {
      * start the threads belongs to this thread pool
      */
     public void start() {
-        for(Thread t:threads){
-            t.start();
+        for(Thread t1:threads){
+            t1.start();
         }
     }
-
 }
