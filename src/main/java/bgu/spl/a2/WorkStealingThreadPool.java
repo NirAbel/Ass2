@@ -91,4 +91,7 @@ public class WorkStealingThreadPool {
             t1.start();
         }
     }
+    public VersionMonitor getVersionMonitor(){
+        return versionMonitor;
+    }
 }
