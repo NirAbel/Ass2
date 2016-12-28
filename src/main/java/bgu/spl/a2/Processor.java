@@ -46,9 +46,5 @@ public class Processor implements Runnable {
         //TODO: replace method body with real implementation
         throw new UnsupportedOperationException("Not Implemented Yet.");
     }
-    void addTask(Task<?> task) {
-        tasksQueues.addLast(task);
-        pool.getVersionMonitor().inc();
-    }
 
-    }
+}
