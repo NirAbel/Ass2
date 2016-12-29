@@ -31,21 +31,21 @@ public class WorkStealingThreadPool {
      */
 
     ArrayList<ConcurrentLinkedDeque<Task<?>>> tasksQueues;
-    private ArrayList<Processor> processors;
+    private Processor[] processors;
     private ArrayList<Thread> threads;
     private VersionMonitor versionMonitor;
     private int nthreads;
 
     public WorkStealingThreadPool(int nthreads) {
         this.nthreads=nthreads;
-        processors = new ArrayList<Processor>();
+        processors = new Processor[nthreads];
         versionMonitor = new VersionMonitor();
         threads = new ArrayList<Thread>();
         tasksQueues = new ArrayList<ConcurrentLinkedDeque<Task<?>>>();
         for(int i=0; i < this.nthreads; i++){
-            processors.add(new Processor(i,this));
+            processors[i]= new Processor(i, this);
             tasksQueues.add(new ConcurrentLinkedDeque<Task<?>>());
-            threads.add(new Thread(processors.get(i)));
+            threads.add(new Thread(processors[i]));
         }
     }
 
@@ -58,6 +58,7 @@ public class WorkStealingThreadPool {
         Random rnd = new Random();
         int randomProc = rnd.nextInt(this.nthreads);
         tasksQueues.get(randomProc).add(task);
+        processors[randomProc].addTask(task);
     }
 
     /**

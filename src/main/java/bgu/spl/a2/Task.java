@@ -15,6 +15,15 @@ import java.util.Collection;
  */
 public abstract class Task<R> {
 
+    private Processor currProcessor;
+    private Runnable Callback;
+    private int numTaskWaitingFor = 0;
+    private Deferred<R> deferred = new Deferred<>();
+    private boolean started = false;
+    private final Object lockNumOfTask = new Object();
+
+
+
     /**
      * start handling the task - note that this method is protected, a handler
      * cannot call it directly but instead must use the
@@ -38,8 +47,12 @@ public abstract class Task<R> {
      * @param handler the handler that wants to handle the task
      */
     /*package*/ final void handle(Processor handler) {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        currProcessor = handler;
+        if (!started) {
+            started = true;
+            this.start();
+        } else
+            Callback.run();
     }
 
     /**
@@ -49,8 +62,9 @@ public abstract class Task<R> {
      * @param task the task to execute
      */
     protected final void spawn(Task<?>... task) {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        for(Task<?> t : task){
+            currProcessor.addTask(t);
+        }
     }
 
     /**
@@ -64,9 +78,23 @@ public abstract class Task<R> {
      * @param callback the callback to execute once all the results are resolved
      */
     protected final void whenResolved(Collection<? extends Task<?>> tasks, Runnable callback) {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        Callback = callback;
+        numTaskWaitingFor = tasks.size();
+
+        for (Task task : tasks)
+        {
+            task.getResult().whenResolved(() -> {
+                synchronized (lockNumOfTask) {
+                    if (numTaskWaitingFor == 1) {
+                        currProcessor.addTask(this);
+                    } else
+                        numTaskWaitingFor--;
+                }
+            }
+            );
+        }
     }
+
 
     /**
      * resolve the internal result - should be called by the task derivative
@@ -75,16 +103,14 @@ public abstract class Task<R> {
      * @param result - the task calculated result
      */
     protected final void complete(R result) {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        this.deferred.resolve(result);
     }
 
     /**
      * @return this task deferred result
      */
     public final Deferred<R> getResult() {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        return  deferred;
     }
 
 }
