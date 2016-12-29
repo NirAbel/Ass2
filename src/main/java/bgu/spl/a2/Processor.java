@@ -47,8 +47,41 @@ public class Processor implements Runnable {
         throw new UnsupportedOperationException("Not Implemented Yet.");
     }
 
-
-    void addTask(Task<?> task) {
+    private void stealTheTasks() throws InterruptedException {
+        int numberOfproccesorToStealFrom;
+        Processor proccesorToStealFrom;
+        int currVersionMonitorNumber=pool.getVersionMonitor().getVersion();
+        boolean isFound=false;
+        if(id==pool.getProcessors().size()-1)//checks if its the last proccesor in the array
+            numberOfproccesorToStealFrom=0;
+        else
+            numberOfproccesorToStealFrom=id+1;
+        while (!isFound&&numberOfproccesorToStealFrom!=id){
+            currVersionMonitorNumber=pool.getVersionMonitor().getVersion();
+            proccesorToStealFrom=pool.getProcessors().get(numberOfproccesorToStealFrom);
+                if(proccesorToStealFrom.tasksQueues.size()>1){
+                    isFound=true;
+                    final int numberOfTasksToSteal=(proccesorToStealFrom.tasksQueues.size())/2;
+                    for(int i=0;i<numberOfTasksToSteal&&proccesorToStealFrom.tasksQueues.size()>1;i++){
+                        Task t=proccesorToStealFrom.tasksQueues.pollLast();
+                        if(t!=null){
+                            this.tasksQueues.addLast(t);
+                        }
+                    }
+                }
+                else{
+                    if(numberOfproccesorToStealFrom==pool.getProcessors().size()-1){
+                        numberOfproccesorToStealFrom=0;
+                    }
+                    else
+                        numberOfproccesorToStealFrom=numberOfproccesorToStealFrom+1;
+                }
+        }
+        if(this.tasksQueues.size()==0){
+            pool.getVersionMonitor().await(currVersionMonitorNumber);
+        }
+    }
+        void addTask(Task<?> task) {
         tasksQueues.addLast(task);
         pool.getVersionMonitor().inc();
     }

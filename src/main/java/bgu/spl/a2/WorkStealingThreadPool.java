@@ -3,6 +3,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.ArrayList;
 import java.util.*;
 
+//TODO::change in the submit ,to add the task in the proccesor class and not this class
+
 /**
  * represents a work stealing thread pool - to understand what this class does
  * please refer to your assignment.
@@ -94,4 +96,8 @@ public class WorkStealingThreadPool {
     public VersionMonitor getVersionMonitor(){
         return versionMonitor;
     }
+    public ArrayList<Processor> getProcessors(){
+        return processors;
+    }
 }
+
