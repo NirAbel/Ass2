@@ -97,7 +97,7 @@ public class WorkStealingThreadPool {
     public VersionMonitor getVersionMonitor(){
         return versionMonitor;
     }
-    public ArrayList<Processor> getProcessors(){
+    public Processor[] getProcessors(){
         return processors;
     }
 }

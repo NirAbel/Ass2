@@ -64,13 +64,13 @@ public class Processor implements Runnable {
         Processor proccesorToStealFrom;
         int currVersionMonitorNumber=pool.getVersionMonitor().getVersion();
         boolean isFound=false;
-        if(id==pool.getProcessors().size()-1)//checks if its the last proccesor in the array
+        if(id==(pool.getProcessors().length)-1)//checks if its the last proccesor in the array
             numberOfProccesorToStealFrom=0;
         else
             numberOfProccesorToStealFrom=id+1;
         while (!isFound&&numberOfProccesorToStealFrom!=id){
             currVersionMonitorNumber=pool.getVersionMonitor().getVersion();
-            proccesorToStealFrom=pool.getProcessors().get(numberOfProccesorToStealFrom);
+            proccesorToStealFrom=pool.getProcessors()[numberOfProccesorToStealFrom];
                 if(proccesorToStealFrom.tasksQueues.size()>1){
                     isFound=true;
                     final int numberOfTasksToSteal=(proccesorToStealFrom.tasksQueues.size())/2;
@@ -82,7 +82,7 @@ public class Processor implements Runnable {
                     }
                 }
                 else{
-                    if(numberOfProccesorToStealFrom==pool.getProcessors().size()-1){
+                    if(numberOfProccesorToStealFrom==(pool.getProcessors().length)-1){
                         numberOfProccesorToStealFrom=0;
                     }
                     else
