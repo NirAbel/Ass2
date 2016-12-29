@@ -47,9 +47,10 @@ public class Processor implements Runnable {
         throw new UnsupportedOperationException("Not Implemented Yet.");
     }
 
+
     void addTask(Task<?> task) {
-        tasksQueues.addFirst(task);
-        getPool().getVersionMonitor().inc();
+        tasksQueues.addLast(task);
+        pool.getVersionMonitor().inc();
     }
 
     WorkStealingThreadPool getPool() {
