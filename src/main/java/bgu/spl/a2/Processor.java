@@ -43,10 +43,23 @@ public class Processor implements Runnable {
 
     @Override
     public void run() {
-        //TODO: replace method body with real implementation
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        while (!Thread.currentThread().isInterrupted()) {
+            Task t1;
+            try {
+                if (tasksQueues.isEmpty()) {
+                    stealTheTasks();
+                } else {
+                    t1 = tasksQueues.pollFirst();
+                    if (t1 != null)
+                        t1.handle(this);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
+    private void stealTheTasks() throws InterruptedException {}
 
     void addTask(Task<?> task) {
         tasksQueues.addLast(task);
@@ -59,6 +72,10 @@ public class Processor implements Runnable {
 
     public LinkedBlockingDeque getTasks(){
         return tasksQueues;
+    }
+
+    public int getId(){
+        return id;
     }
 
 
