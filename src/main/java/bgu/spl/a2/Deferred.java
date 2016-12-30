@@ -17,14 +17,9 @@ import java.util.ArrayList;
  */
 public class Deferred<T> {
 
-    T result;
-    ArrayList<Runnable> callbacks = new ArrayList<>();
-    private boolean isResolved;
-
-    public Deferred(){
-        isResolved = false;
-        result = null;
-    }
+    T result = null;
+    Runnable end_callback = null;
+    private boolean isResolved = false;
 
     /**
      *
@@ -63,15 +58,12 @@ public class Deferred<T> {
      * @throws IllegalStateException in the case where this object is already
      * resolved
      */
-    public synchronized void resolve(T value){
+    public void resolve(T value){
         if (isResolved()) throw new IllegalStateException("don't need to resolve");
-        else {
-            isResolved = true;
-            result = value;
-
-            for (Runnable r : callbacks) {
-                r.run();
-            }
+        isResolved = true;
+        result = value;
+        if (end_callback != null) {
+            end_callback.run();
         }
     }
 
@@ -89,17 +81,11 @@ public class Deferred<T> {
      * resolved
      */
     public void whenResolved(Runnable callback) {
-        callbacks.add(callback);
         if (isResolved()) {
-            wakeUpCallbacks();
+            callback.run();
+        }
+        else {
+            end_callback = callback;
         }
    }
-
-
-    private synchronized void wakeUpCallbacks(){
-        while (callbacks.size()>0){
-            callbacks.get(0).run();
-            callbacks.remove(0);
-        }
-    }
 }
