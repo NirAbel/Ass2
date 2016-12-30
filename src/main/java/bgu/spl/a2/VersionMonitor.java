@@ -29,12 +29,10 @@ public class VersionMonitor {
     synchronized public void inc() {
         versionNumber.incrementAndGet();
         notifyAll();
-       //System.out.println("everyone is awake");
     }
 
     synchronized public void await(int version) throws InterruptedException {
         while (version==versionNumber.get()){
-        //   System.out.println(Thread.currentThread().getId()+" im in wait");
             wait();
         }
     }
