@@ -1,11 +1,12 @@
 package bgu.spl.a2;
 
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * an abstract class that represents a task that may be executed using the
  * {@link WorkStealingThreadPool}
- *
+ * <p>
  * Note for implementors: you may add methods and synchronize any of the
  * existing methods in this class *BUT* you must be able to explain why the
  * synchronization is needed. In addition, the methods you add to this class can
@@ -22,8 +23,6 @@ public abstract class Task<R> {
     private boolean started = false;
     private final Object lockNumOfTask = new Object();
 
-
-
     /**
      * start handling the task - note that this method is protected, a handler
      * cannot call it directly but instead must use the
@@ -32,21 +31,21 @@ public abstract class Task<R> {
     protected abstract void start();
 
     /**
-     *
      * start/continue handling the task
-     *
+     * <p>
      * this method should be called by a processor in order to start this task
      * or continue its execution in the case where it has been already started,
      * any sub-tasks / child-tasks of this task should be submitted to the queue
      * of the handler that handles it currently
-     *
+     * <p>
      * IMPORTANT: this method is package protected, i.e., only classes inside
      * the same package can access it - you should *not* change it to
      * public/private/protected
      *
      * @param handler the handler that wants to handle the task
      */
-    /*package*/ final void handle(Processor handler) {
+    /*package*/
+    final void handle(Processor handler) {
         currProcessor = handler;
         if (!started) {
             started = true;
@@ -62,7 +61,7 @@ public abstract class Task<R> {
      * @param task the task to execute
      */
     protected final void spawn(Task<?>... task) {
-        for(Task<?> t : task){
+        for (Task<?> t : task) {
             currProcessor.addTask(t);
         }
     }
@@ -70,7 +69,7 @@ public abstract class Task<R> {
     /**
      * add a callback to be executed once *all* the given tasks results are
      * resolved
-     *
+     * <p>
      * Implementors note: make sure that the callback is running only once when
      * all the given tasks completed.
      *
@@ -81,16 +80,15 @@ public abstract class Task<R> {
         Callback = callback;
         numTaskWaitingFor = tasks.size();
 
-        for (Task task : tasks)
-        {
+        for (Task task : tasks) {
             task.getResult().whenResolved(() -> {
-                synchronized (lockNumOfTask) {
-                    if (numTaskWaitingFor == 1) {
-                        currProcessor.addTask(this);
-                    } else
-                        numTaskWaitingFor--;
-                }
-            }
+                        synchronized (lockNumOfTask) {
+                            if (this.numTaskWaitingFor == 1)
+                                currProcessor.addTask(this);
+                            else
+                                this.numTaskWaitingFor--;
+                        }
+                    }
             );
         }
     }
@@ -110,7 +108,6 @@ public abstract class Task<R> {
      * @return this task deferred result
      */
     public final Deferred<R> getResult() {
-        return  deferred;
+        return deferred;
     }
-
 }
