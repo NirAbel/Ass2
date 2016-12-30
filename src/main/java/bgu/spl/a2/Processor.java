@@ -1,5 +1,7 @@
 package bgu.spl.a2;
 
+import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
@@ -46,6 +48,10 @@ public class Processor implements Runnable {
             Task t1;
             try {
                 if (tasksQueues.isEmpty()) {
+                  // int currVersion=pool.getVersionMonitor().getVersion();
+                  // boolean didSteal= stealTheTasks();
+                   // if (!didSteal)
+                     //   pool.getVersionMonitor().await(currVersion);
                     stealTheTasks();
                 } else {
                     t1 = tasksQueues.pollFirst();
@@ -59,40 +65,77 @@ public class Processor implements Runnable {
     }
 
     private void stealTheTasks() throws InterruptedException {
+
         int numberOfProccesorToStealFrom;
         Processor proccesorToStealFrom;
         int currVersionMonitorNumber = pool.getVersionMonitor().getVersion();
         boolean isFound = false;
-        if (id == (pool.getProcessors().length) - 1)//checks if its the last proccesor in the array
-            numberOfProccesorToStealFrom = 0;
-        else
-            numberOfProccesorToStealFrom = id + 1;
-        while (!isFound && numberOfProccesorToStealFrom != id) {
-            currVersionMonitorNumber = pool.getVersionMonitor().getVersion();
-            proccesorToStealFrom = pool.getProcessors()[numberOfProccesorToStealFrom];
-            if (proccesorToStealFrom.tasksQueues.size() > 1) {
-                isFound = true;
-                final int numberOfTasksToSteal = (proccesorToStealFrom.tasksQueues.size()) / 2;
-                for (int i = 0; i < numberOfTasksToSteal && proccesorToStealFrom.tasksQueues.size() > 1; i++) {
-                    Task t = proccesorToStealFrom.tasksQueues.pollLast();
-                    if (t != null) {
-                        this.tasksQueues.addLast(t);
+        boolean checkAgain = true;
+//        if (id == (pool.getProcessors().length) - 1)//checks if its the last proccesor in the array
+//            numberOfProccesorToStealFrom = 0;
+//        else
+//            numberOfProccesorToStealFrom = id + 1;
+        while (checkAgain && !isFound) {
+            checkAgain = false;
+            if (id == (pool.getProcessors().length) - 1)//checks if its the last proccesor in the array
+                numberOfProccesorToStealFrom = 0;
+            else
+                numberOfProccesorToStealFrom = id + 1;
+            while (!isFound && numberOfProccesorToStealFrom != id) {
+//                System.out.println("processor: "+id+ " is stealing from: "+numberOfProccesorToStealFrom);
+//                System.out.println("processor: "+id+ " has "+tasksQueues.size()+ " tasks before");
+                currVersionMonitorNumber = pool.getVersionMonitor().getVersion();
+                proccesorToStealFrom = pool.getProcessors()[numberOfProccesorToStealFrom];
+                if (proccesorToStealFrom.tasksQueues.size() >= 1) {
+                    isFound = true;
+                    final int numberOfTasksToSteal = (proccesorToStealFrom.tasksQueues.size()) / 2;
+                    for (int i = 0; i < numberOfTasksToSteal && proccesorToStealFrom.tasksQueues.size() > 1; i++) {
+                        Task t = proccesorToStealFrom.tasksQueues.pollLast();
+                        if (t != null) {
+                            this.tasksQueues.addLast(t);
+                        }
                     }
+                } else {
+                    if (numberOfProccesorToStealFrom == (pool.getProcessors().length) - 1) {
+                        numberOfProccesorToStealFrom = 0;
+                    } else
+                        numberOfProccesorToStealFrom = numberOfProccesorToStealFrom + 1;
                 }
-            } else {
-                if (numberOfProccesorToStealFrom == (pool.getProcessors().length) - 1) {
-                    numberOfProccesorToStealFrom = 0;
-                } else
-                    numberOfProccesorToStealFrom = numberOfProccesorToStealFrom + 1;
+                if (currVersionMonitorNumber != pool.getVersionMonitor().getVersion())
+                    checkAgain = true;
+//                System.out.println("processor: "+id+ " has "+tasksQueues.size()+ " tasks after");
+
             }
         }
         if (this.tasksQueues.size() == 0) {
             pool.getVersionMonitor().await(currVersionMonitorNumber);
         }
     }
+//    }
+//    private boolean stealTheTasks(){
+//        boolean ans=false;
+//        int idToSteal=(id+1)%pool.getProcessors().length;
+//        while (!ans&&idToSteal!=id){
+//            LinkedBlockingDeque<Task> queue2steal=pool.getProcessors()[idToSteal].tasksQueues;
+//            synchronized (queue2steal){
+//                if ((queue2steal.size()>=1)){
+//                    ans=true;
+//                    for(int i=0;i<(queue2steal.size())/2;i++) {
+//                        Task tmp = queue2steal.pollLast();
+//                        if (tmp != null)
+//                            tasksQueues.addFirst(tmp);
+//                    }
+//                }
+//                else{
+//                    idToSteal=(idToSteal+1)%pool.getProcessors().length;
+//                }
+//            }
+//        }
+//        return ans;
+//    }
 
     void addTask(Task<?> task) {
-        tasksQueues.addLast(task);
+        tasksQueues.addFirst(task);
         pool.getVersionMonitor().inc();
     }
 

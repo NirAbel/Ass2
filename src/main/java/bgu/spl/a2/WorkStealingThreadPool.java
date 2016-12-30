@@ -30,7 +30,7 @@ public class WorkStealingThreadPool {
      * thread pool
      */
 
-    ArrayList<ConcurrentLinkedDeque<Task<?>>> tasksQueues;
+ //   ArrayList<ConcurrentLinkedDeque<Task<?>>> tasksQueues;
     private Processor[] processors;
     private ArrayList<Thread> threads;
     private VersionMonitor versionMonitor;
@@ -41,10 +41,10 @@ public class WorkStealingThreadPool {
         processors = new Processor[nthreads];
         versionMonitor = new VersionMonitor();
         threads = new ArrayList<Thread>();
-        tasksQueues = new ArrayList<ConcurrentLinkedDeque<Task<?>>>();
+     //   tasksQueues = new ArrayList<ConcurrentLinkedDeque<Task<?>>>();
         for(int i=0; i < this.nthreads; i++){
             processors[i]= new Processor(i, this);
-            tasksQueues.add(new ConcurrentLinkedDeque<Task<?>>());
+        //    tasksQueues.add(new ConcurrentLinkedDeque<Task<?>>());
             threads.add(new Thread(processors[i]));
         }
     }
@@ -57,7 +57,6 @@ public class WorkStealingThreadPool {
     public void submit(Task<?> task) {
         Random rnd = new Random();
         int randomProc = rnd.nextInt(this.nthreads);
-        tasksQueues.get(randomProc).add(task);
         processors[randomProc].addTask(task);
     }
 
@@ -74,10 +73,10 @@ public class WorkStealingThreadPool {
      * shutdown the queue is itself a processor of this queue
      */
     public void shutdown() throws InterruptedException {
-        for(Thread t1: threads){
-            if(t1.getId()==t1.currentThread().getId())
-                throw new UnsupportedOperationException("A Processor can't shutdown!");
-        }
+//        for(Thread t1: threads){
+//            if(t1.getId()==t1.currentThread().getId())
+//                throw new UnsupportedOperationException("A Processor can't shutdown!");
+//        }
         for(Thread t1: threads){
             t1.interrupt();
         }

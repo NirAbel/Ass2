@@ -58,7 +58,7 @@ public class Deferred<T> {
      * @throws IllegalStateException in the case where this object is already
      * resolved
      */
-    public void resolve(T value){
+    public synchronized void resolve(T value){
         if (isResolved()) throw new IllegalStateException("don't need to resolve");
         isResolved = true;
         result = value;
@@ -80,7 +80,7 @@ public class Deferred<T> {
      * @param callback the callback to be called when the deferred object is
      * resolved
      */
-    public void whenResolved(Runnable callback) {
+    public synchronized void whenResolved(Runnable callback) {
         if (isResolved()) {
             callback.run();
         }
