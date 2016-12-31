@@ -18,7 +18,7 @@ public abstract class Task<R> {
 
     private Processor currProcessor;
     private Runnable Callback;
-    private int numTaskWaitingFor = 0;
+    private AtomicInteger numTaskWaitingFor = new AtomicInteger(0);
     private Deferred<R> deferred = new Deferred<>();
     private boolean started = false;
     private final Object lockNumOfTask = new Object();
@@ -79,16 +79,18 @@ public abstract class Task<R> {
      */
     protected final void whenResolved(Collection<? extends Task<?>> tasks, Runnable callback) {
         Callback = callback;
-        numTaskWaitingFor = tasks.size();
+
 
         for (Task task : tasks) {
             task.getResult().whenResolved(() -> {
-                        synchronized (lockNumOfTask) {
-                            if (this.numTaskWaitingFor == 1)
-                                currProcessor.addTask(this);
-                            else
-                                this.numTaskWaitingFor--;
-                        }
+                      //  synchronized (lockNumOfTask) {
+                            if (numTaskWaitingFor.incrementAndGet()==tasks.size())
+                                handle(currProcessor);
+//                            if (this.numTaskWaitingFor == 1)
+//                                currProcessor.addTask(this);
+//                            else
+//                                this.numTaskWaitingFor--;
+                      //  }
                     }
             );
         }

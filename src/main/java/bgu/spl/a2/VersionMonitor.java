@@ -19,20 +19,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * methods
  */
 public class VersionMonitor {
-    private int versionNumber = 0;
+    private AtomicInteger versionNumber = new AtomicInteger(0);
     public int version;
 
     public int getVersion() {
-        return versionNumber;
+        return versionNumber.get();
     }
 
     synchronized public void inc() {
-        versionNumber++;
+        versionNumber.incrementAndGet();
         notifyAll();
+       //System.out.println("everyone is awake");
     }
 
     synchronized public void await(int version) throws InterruptedException {
-        while (version==versionNumber){
+        while (version==versionNumber.get()){
+        //   System.out.println(Thread.currentThread().getId()+" im in wait");
             wait();
         }
     }
