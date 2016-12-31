@@ -3,6 +3,15 @@ package bgu.spl.a2.sim;
 import bgu.spl.a2.sim.tools.Tool;
 import bgu.spl.a2.sim.conf.ManufactoringPlan;
 import bgu.spl.a2.Deferred;
+import bgu.spl.a2.Task;
+import bgu.spl.a2.WorkStealingThreadPool;
+import javafx.util.Pair;
+import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A class representing the warehouse in your simulation
@@ -14,6 +23,12 @@ import bgu.spl.a2.Deferred;
  *
  */
 public class Warehouse {
+
+	Map<String,Pair<Tool,Integer>> tools;
+	List<ManufactoringPlan> plans;
+	Map<Tool,ConcurrentLinkedQueue<Deferred<Tool>>> waitingList;
+	WorkStealingThreadPool taskPool;
+	Map<String,AtomicLong> IdByProduct;
 
 	/**
 	* Constructor
