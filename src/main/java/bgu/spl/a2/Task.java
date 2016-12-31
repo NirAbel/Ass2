@@ -83,14 +83,8 @@ public abstract class Task<R> {
 
         for (Task task : tasks) {
             task.getResult().whenResolved(() -> {
-                      //  synchronized (lockNumOfTask) {
                             if (numTaskWaitingFor.incrementAndGet()==tasks.size())
                                 handle(currProcessor);
-//                            if (this.numTaskWaitingFor == 1)
-//                                currProcessor.addTask(this);
-//                            else
-//                                this.numTaskWaitingFor--;
-                      //  }
                     }
             );
         }

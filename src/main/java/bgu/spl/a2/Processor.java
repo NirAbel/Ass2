@@ -48,10 +48,6 @@ public class Processor implements Runnable {
             Task t1;
             try {
                 if (tasksQueues.isEmpty()) {
-                  // int currVersion=pool.getVersionMonitor().getVersion();
-                  // boolean didSteal= stealTheTasks();
-                   // if (!didSteal)
-                     //   pool.getVersionMonitor().await(currVersion);
                     stealTheTasks();
                 } else {
                     t1 = tasksQueues.pollFirst();
@@ -71,10 +67,6 @@ public class Processor implements Runnable {
         int currVersionMonitorNumber = pool.getVersionMonitor().getVersion();
         boolean isFound = false;
         boolean checkAgain = true;
-//        if (id == (pool.getProcessors().length) - 1)//checks if its the last proccesor in the array
-//            numberOfProccesorToStealFrom = 0;
-//        else
-//            numberOfProccesorToStealFrom = id + 1;
         while (checkAgain && !isFound) {
             checkAgain = false;
             if (id == (pool.getProcessors().length) - 1)//checks if its the last proccesor in the array
@@ -82,8 +74,6 @@ public class Processor implements Runnable {
             else
                 numberOfProccesorToStealFrom = id + 1;
             while (!isFound && numberOfProccesorToStealFrom != id) {
-//                System.out.println("processor: "+id+ " is stealing from: "+numberOfProccesorToStealFrom);
-//                System.out.println("processor: "+id+ " has "+tasksQueues.size()+ " tasks before");
                 currVersionMonitorNumber = pool.getVersionMonitor().getVersion();
                 proccesorToStealFrom = pool.getProcessors()[numberOfProccesorToStealFrom];
                 if (proccesorToStealFrom.tasksQueues.size() >= 1) {
@@ -103,37 +93,12 @@ public class Processor implements Runnable {
                 }
                 if (currVersionMonitorNumber != pool.getVersionMonitor().getVersion())
                     checkAgain = true;
-//                System.out.println("processor: "+id+ " has "+tasksQueues.size()+ " tasks after");
-
             }
         }
         if (this.tasksQueues.size() == 0) {
             pool.getVersionMonitor().await(currVersionMonitorNumber);
         }
     }
-//    }
-//    private boolean stealTheTasks(){
-//        boolean ans=false;
-//        int idToSteal=(id+1)%pool.getProcessors().length;
-//        while (!ans&&idToSteal!=id){
-//            LinkedBlockingDeque<Task> queue2steal=pool.getProcessors()[idToSteal].tasksQueues;
-//            synchronized (queue2steal){
-//                if ((queue2steal.size()>=1)){
-//                    ans=true;
-//                    for(int i=0;i<(queue2steal.size())/2;i++) {
-//                        Task tmp = queue2steal.pollLast();
-//                        if (tmp != null)
-//                            tasksQueues.addFirst(tmp);
-//                    }
-//                }
-//                else{
-//                    idToSteal=(idToSteal+1)%pool.getProcessors().length;
-//                }
-//            }
-//        }
-//        return ans;
-//    }
-
     void addTask(Task<?> task) {
         tasksQueues.addFirst(task);
         pool.getVersionMonitor().inc();
