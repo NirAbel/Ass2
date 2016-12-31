@@ -79,11 +79,9 @@ public class WorkStealingThreadPool {
 //        }
         for(Thread t1: threads){
             t1.interrupt();
-            System.out.println(Thread.currentThread().getId()+" shutdown1");
         }
             for(Thread t1: threads){
                 t1.join();
-                System.out.println(Thread.currentThread().getId()+" shutdown2");
             }
     }
 
@@ -93,7 +91,6 @@ public class WorkStealingThreadPool {
     public void start() {
         for(Thread t1:threads){
             t1.start();
-            System.out.println(Thread.currentThread().getId()+" start1");
         }
     }
     public VersionMonitor getVersionMonitor(){
