@@ -15,7 +15,7 @@ import java.util.List;
 import bgu.spl.a2.sim.json.Wave;
 import bgu.spl.a2.sim.json.Order;
 import bgu.spl.a2.sim.json.Plan;
-import bgu.spl.a2.sim.json.Tool;
+import bgu.spl.a2.sim.json.ToolJson;
 import bgu.spl.a2.sim.json.ParseData;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;

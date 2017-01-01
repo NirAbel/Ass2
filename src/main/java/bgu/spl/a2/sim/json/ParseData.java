@@ -12,7 +12,7 @@ public class ParseData {
     private Integer threads;
     @SerializedName("tools")
     @Expose
-    private List<Tool> tools = null;
+    private List<ToolJson> tools = null;
     @SerializedName("plans")
     @Expose
     private List<Plan> plans = null;
@@ -28,11 +28,11 @@ public class ParseData {
         this.threads = threads;
     }
 
-    public List<Tool> getTools() {
+    public List<ToolJson> getTools() {
         return tools;
     }
 
-    public void setTools(List<Tool> tools) {
+    public void setTools(List<ToolJson> tools) {
         this.tools = tools;
     }
 

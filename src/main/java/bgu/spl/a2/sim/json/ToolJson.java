@@ -3,7 +3,7 @@ package bgu.spl.a2.sim.json;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Tool {
+public class ToolJson {
 
     @SerializedName("tool")
     @Expose
