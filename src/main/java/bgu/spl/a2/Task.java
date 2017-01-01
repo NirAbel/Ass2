@@ -63,6 +63,7 @@ public abstract class Task<R> {
     protected final void spawn(Task<?>... task) {
         for (Task<?> t : task) {
             currProcessor.addTask(t);
+            System.out.println(Thread.currentThread().getId()+" spawn 1");
         }
     }
 
@@ -87,6 +88,7 @@ public abstract class Task<R> {
                     }
             );
         }
+        System.out.println(Thread.currentThread().getId()+" whenResolve");
     }
 
 

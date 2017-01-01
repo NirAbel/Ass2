@@ -53,7 +53,7 @@ public class Processor implements Runnable {
                     t1 = tasksQueues.pollFirst();
                     if (t1 != null)
                         t1.handle(this);
-                }
+            }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
