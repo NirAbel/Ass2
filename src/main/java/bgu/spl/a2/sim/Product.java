@@ -11,6 +11,7 @@ public class Product {
 	private long finalId;
 	private String name;
 	private ArrayList<Product> parts;
+
 	/**
 	* Constructor 
 	* @param startId - Product start id
@@ -66,4 +67,6 @@ public class Product {
 	public void setFinalId(long id){
 		this.finalId=id;
 	}
+
+
 }

@@ -1,4 +1,4 @@
-package bgu.spl.a2.sim;
+package bgu.spl.a2.sim.json;
 
 public class GsonReader {
     int threads;
