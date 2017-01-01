@@ -24,12 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Warehouse {
 
-	Map<String,Pair<Tool,Integer>> tools;
-	List<ManufactoringPlan> plans;
-	Map<Tool,ConcurrentLinkedQueue<Deferred<Tool>>> waitingList;
-	WorkStealingThreadPool taskPool;
-	Map<String,AtomicLong> IdByProduct;
-
 	/**
 	* Constructor
 	*/
