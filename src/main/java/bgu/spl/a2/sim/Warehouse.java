@@ -6,16 +6,8 @@ import bgu.spl.a2.sim.tools.RandomSumPliers;
 import bgu.spl.a2.sim.tools.Tool;
 import bgu.spl.a2.sim.conf.ManufactoringPlan;
 import bgu.spl.a2.Deferred;
-import bgu.spl.a2.Task;
-import bgu.spl.a2.WorkStealingThreadPool;
-import javafx.util.Pair;
 import java.util.List;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -29,10 +21,11 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  *
  */
 public class Warehouse {
+    List<ManufactoringPlan> plans;
     private ConcurrentLinkedDeque <GcdScrewDriver> gsDrivers;
     private ConcurrentLinkedDeque<NextPrimeHammer> npHammers;
     private ConcurrentLinkedDeque<RandomSumPliers> rsPliers;
-    private ConcurrentLinkedDeque<Deferred<Tool>> gsdDeferreds;
+    private ConcurrentLinkedDeque<Deferred<Tool>> gcdDeferreds;
     private ConcurrentLinkedDeque<Deferred<Tool>> npDeferreds;
     private ConcurrentLinkedDeque<Deferred<Tool>> rsDeferreds;
 
@@ -40,10 +33,11 @@ public class Warehouse {
 	* Constructor
 	*/
     public Warehouse(){
+        plans=new LinkedList<>();
         gsDrivers=new ConcurrentLinkedDeque<>();
         npHammers=new ConcurrentLinkedDeque<>();
         rsPliers=new ConcurrentLinkedDeque<>();
-        gsdDeferreds=new ConcurrentLinkedDeque<>();
+        gcdDeferreds=new ConcurrentLinkedDeque<>();
         npDeferreds=new ConcurrentLinkedDeque<>();
         rsDeferreds=new ConcurrentLinkedDeque<>();
     }
@@ -85,7 +79,7 @@ public class Warehouse {
                     toolDeferred.resolve(t);
                 }
                 else{
-                    gsdDeferreds.add(toolDeferred);
+                    gcdDeferreds.add(toolDeferred);
                 }
                 return toolDeferred;
             }
@@ -98,7 +92,36 @@ public class Warehouse {
 	* Tool return procedure - releases a tool which becomes available in the warehouse upon completion.
 	* @param tool - The tool to be returned
 	*/
-    public void releaseTool(Tool tool);
+    public synchronized void releaseTool(Tool tool){
+        //TODO:check if need to add locks and synchronized
+        switch (tool.getType()) {
+            case "rs-pliers":{
+                Deferred<Tool> toolDeferred=rsDeferreds.poll();
+                if(toolDeferred!=null)
+                    toolDeferred.resolve(tool);
+                else
+                    rsPliers.addLast((RandomSumPliers)tool);
+            }
+
+            case "np-hammer":{
+                Deferred<Tool> toolDeferred=npDeferreds.poll();
+                if(toolDeferred!=null)
+                    toolDeferred.resolve(tool);
+                else
+                    npHammers.addLast((NextPrimeHammer)tool);
+            }
+
+            case "gs-driver":{
+                Deferred<Tool> toolDeferred=gcdDeferreds.poll();
+                if(toolDeferred!=null)
+                    toolDeferred.resolve(tool);
+                else
+                    gsDrivers.addLast((GcdScrewDriver)tool);
+            }
+            default:
+                throw new NoSuchElementException("no such tools");
+        }
+    }
 
 	
 	/**
@@ -106,13 +129,21 @@ public class Warehouse {
 	* @param product - a string with the product name for which a ManufactoringPlan is desired
 	* @return A ManufactoringPlan for product
 	*/
-    public ManufactoringPlan getPlan(String product);
+    public ManufactoringPlan getPlan(String product){
+        for(int i=0;i<plans.size();i++){
+            if(plans.get(i).getProductName().equals(product))
+                return plans.get(i);
+        }
+        return null;
+    }
 	
 	/**
 	* Store a ManufactoringPlan in the warehouse for later retrieval
 	* @param plan - a ManufactoringPlan to be stored
 	*/
-    public void addPlan(ManufactoringPlan plan);
+    public void addPlan(ManufactoringPlan plan){
+        plans.add(plan);
+    }
     
 	/**
 	* Store a qty Amount of tools of type tool in the warehouse for later retrieval
