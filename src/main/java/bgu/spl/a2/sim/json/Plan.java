@@ -1,42 +1,58 @@
 package bgu.spl.a2.sim.json;
 
+import java.io.Serializable;
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Plan {
+/**
+ * All the Classes for getting the data from Json file.
+ */
+public class Plan implements Serializable
+{
 
-    @SerializedName("product")
+    @SerializedName("threads")
     @Expose
-    private String product;
+    private int threads;
     @SerializedName("tools")
     @Expose
-    private String[] tools = null;
-    @SerializedName("parts")
+    private List<ToolJson> toolJsons = null;
+    @SerializedName("plans")
     @Expose
-    private String[] parts = null;
+    private List<Plan> plans = null;
+    @SerializedName("waves")
+    @Expose
+    private List<List<Series>> waves = null;
+    private final static long serialVersionUID = 962929236297046047L;
 
-    public String getProduct() {
-        return product;
+    public int getThreads() { return threads; }
+
+    public void setThreads(int threads) {
+        this.threads = threads;
     }
 
-    public void setProduct(String product) {
-        this.product = product;
+    public List<ToolJson> getToolJsons() {
+        return toolJsons;
     }
 
-    public String[] getTools() {
-        return tools;
+    public void setToolJsons(List<ToolJson> toolJsons) {
+        this.toolJsons = toolJsons;
     }
 
-    public void setTools(String[] tools) {
-        this.tools = tools;
+    public List<Plan> getPlans() {
+        return plans;
     }
 
-    public String[] getParts() {
-        return parts;
+    public void setPlans(List<Plan> plans) {
+        this.plans = plans;
     }
 
-    public void setParts(String[] parts) {
-        this.parts = parts;
+    public List<List<Series>> getWaves() {
+        return waves;
+    }
+
+    public void setWaves(List<List<Series>> waves) {
+        this.waves = waves;
     }
 
 }

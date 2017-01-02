@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class ParseData {
+public class Series {
 
     @SerializedName("threads")
     @Expose
@@ -28,6 +28,10 @@ public class ParseData {
         this.threads = threads;
     }
 
+    public List<List<Order>> getWaves() {
+        return waves;
+    }
+
     public List<ToolJson> getTools() {
         return tools;
     }
@@ -36,19 +40,15 @@ public class ParseData {
         this.tools = tools;
     }
 
-    public List<Plan> getPlans() {
-        return plans;
-    }
-
     public void setPlans(List<Plan> plans) {
         this.plans = plans;
     }
 
-    public List<List<Order>> getWaves() {
-        return waves;
+    public List<Plan> getPlans() {
+        return plans;
     }
 
-    public void setWaves(List<List<Order>> waves) {
-        this.waves = waves;
-    }
+
+
+
 }

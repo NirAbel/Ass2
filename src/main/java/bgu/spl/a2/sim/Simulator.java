@@ -2,6 +2,7 @@ package bgu.spl.a2.sim;
 
 import bgu.spl.a2.WorkStealingThreadPool;
 import bgu.spl.a2.sim.conf.ManufactoringPlan;
+import bgu.spl.a2.sim.json.Series;
 import bgu.spl.a2.sim.tasks.ManTask;
 import bgu.spl.a2.sim.tools.GcdScrewDriver;
 import bgu.spl.a2.sim.tools.NextPrimeHammer;
@@ -14,11 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import bgu.spl.a2.sim.json.Wave;
 import bgu.spl.a2.sim.json.Order;
-import bgu.spl.a2.sim.json.Plan;
-import bgu.spl.a2.sim.json.ToolJson;
-import bgu.spl.a2.sim.json.ParseData;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,27 +43,20 @@ public class Simulator {
 			for (Wave currWave : waves) {
 				List<Product> productsInWave = getWaveProducts(currWave);
 				CountDownLatch l = new CountDownLatch(productsInWave.size());
-
 				for (Product currProduct : productsInWave) {
 					ManTask currTask = new ManTask(currProduct, warehouse);
-
 					Simulator.workStealingThreadPool.submit(currTask);
-
 					currTask.getResult().whenResolved(l::countDown);
 				}
 				l.await();
-				for (Product product : productsInWave)
-					manufacturedProducts.add(product);
+				manufacturedProducts.addAll(productsInWave.stream().collect(Collectors.toList()));
 			}
-
 			workStealingThreadPool.shutdown();
-
 		}
 		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
-
 		return manufacturedProducts;
 	}
 
@@ -103,35 +96,35 @@ public class Simulator {
 		}
 	}
 
-	private static void parseData(ParseData parseDataObj) {
+	private static void Series(Series SeriesObj) {
 
-		//create WorkStealingThreadPool
-		WorkStealingThreadPool workStealingThreadPoolTmp = new WorkStealingThreadPool(parseDataObj.getThreads());
+		//create new WorkStealingThreadPool
+		WorkStealingThreadPool workStealingThreadPoolTmp = new WorkStealingThreadPool(SeriesObj.getThreads());
 		Simulator.attachWorkStealingThreadPool(workStealingThreadPoolTmp);
 
 		warehouse = new Warehouse();
 		waves = new ArrayList<>();
-		//add tool to Warehouse
-		for (int i = 0; i < parseDataObj.getTools().size(); i++) {
-			addTool(parseDataObj.getTools().get(i).getTool(), parseDataObj.getTools().get(i).getQty());
+		//this func is adding tool to wareHouse
+		for (int i = 0; i < SeriesObj.getTools().size(); i++) {
+			addTool(SeriesObj.getTools().get(i).getTool(), SeriesObj.getTools().get(i).getQty());
 		}
 
-		//add Plan to Warehouse
-		for (int i = 0; i < parseDataObj.getPlans().size(); i++) {
-			addPlan(parseDataObj, i);
+		//this func is adding plan to wareHouse
+		for (int i = 0; i < SeriesObj.getPlans().size(); i++) {
+			addPlan(SeriesObj, i);
 		}
 
-		//add Wave to Wave List
+		//this func is adding another Wave to Wave List
 		Wave wave;
-		int size = parseDataObj.getWaves().size();
+		int size = SeriesObj.getWaves().size();
 		for (int i = 0; i < size; i++) {
-			wave = new Wave(parseDataObj.getWaves().get(i));
+			wave = new Wave(SeriesObj.getWaves().get(i));
 			waves.add(wave);
 		}
 	}
 
-	//add plan to warehouse
-	private static void addPlan(ParseData obj, int i) {
+	//this func is adding plan to wareHouse
+	private static void addPlan(Series obj, int i) {
 		ManufactoringPlan plan;
 		String product = obj.getPlans().get(i).getProduct();
 		String[] parts = obj.getPlans().get(i).getParts();
@@ -143,17 +136,18 @@ public class Simulator {
 	public static void main(String[] args) {
 		try
 		{
-			String jasonFileLocation = args[0];
-			Gson gson = new Gson();
+			String jasonFile = args[0];
+			Gson newGson = new Gson();
+			Gson newGson1 = new Gson();
 
-			BufferedReader br = new BufferedReader(new FileReader(jasonFileLocation));
-			ParseData obj = gson.fromJson(br, ParseData.class);
-			parseData(obj);
+			BufferedReader br = new BufferedReader(new FileReader(jasonFile));
+			Series obj = newGson.fromJson(br, Series.class);
+			Series(obj);
 
 			ConcurrentLinkedQueue<Product> simulationResult;
 			simulationResult = Simulator.start();
-			FileOutputStream fout = new FileOutputStream("result.ser");
-			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			FileOutputStream stream = new FileOutputStream("result.ser");
+			ObjectOutputStream oos = new ObjectOutputStream(stream);
 			oos.writeObject(simulationResult);
 			oos.close();
 			br.close();
