@@ -8,17 +8,15 @@ import bgu.spl.a2.sim.tools.GcdScrewDriver;
 import bgu.spl.a2.sim.tools.NextPrimeHammer;
 import bgu.spl.a2.sim.tools.RandomSumPliers;
 import com.google.gson.Gson;
-
 import java.io.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import bgu.spl.a2.sim.json.Wave;
 import bgu.spl.a2.sim.json.Order;
-
+import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
+
 
 
 /**
@@ -29,27 +27,26 @@ public class Simulator {
 	private static WorkStealingThreadPool workStealingThreadPool;
 	private static List<Wave> waves;
 	private static Warehouse warehouse;
+	private static String filePath;
 
 	/**
 	 * Begin the simulation
 	 * Should not be called before attachWorkStealingThreadPool()
 	 */
 	public static ConcurrentLinkedQueue<Product> start() {
-
-		ConcurrentLinkedQueue<Product> manufacturedProducts = new ConcurrentLinkedQueue<>();
-
+		ConcurrentLinkedQueue<Product> manProducts = new ConcurrentLinkedQueue<>();
 		try {
 			workStealingThreadPool.start();
 			for (Wave currWave : waves) {
-				List<Product> productsInWave = getWaveProducts(currWave);
-				CountDownLatch l = new CountDownLatch(productsInWave.size());
-				for (Product currProduct : productsInWave) {
+				List<Product> productWave = getTheWaveProduct(currWave);
+				CountDownLatch l = new CountDownLatch(productWave.size());
+				for (Product currProduct : productWave) {
 					ManTask currTask = new ManTask(currProduct, warehouse);
 					Simulator.workStealingThreadPool.submit(currTask);
 					currTask.getResult().whenResolved(l::countDown);
 				}
 				l.await();
-				manufacturedProducts.addAll(productsInWave.stream().collect(Collectors.toList()));
+				manProducts.addAll(productWave.stream().collect(Collectors.toList()));
 			}
 			workStealingThreadPool.shutdown();
 		}
@@ -57,17 +54,18 @@ public class Simulator {
 		{
 			e.printStackTrace();
 		}
-		return manufacturedProducts;
+		return manProducts;
 	}
 
-	private static List<Product> getWaveProducts(Wave wave)
+	private static List<Product> getTheWaveProduct(Wave wave)
 	{
 		List<Product> productList = new ArrayList<>();
-
+		int count=0;
 		for (Order order : wave.getOrders())
 		{
 			for (int i = 0; i < order.getQty(); i++) {
 				productList.add(new Product(order.getStartId() + i, order.getProduct()));
+				count++;
 			}
 		}
 
@@ -85,22 +83,22 @@ public class Simulator {
 
 	private static void addTool(String toolType, int qty) {
 		if (toolType.equals("gs-driver")) {
-			GcdScrewDriver tool = new GcdScrewDriver();
-			warehouse.addTool(tool, qty);
+			GcdScrewDriver t1 = new GcdScrewDriver();
+			warehouse.addTool(t1, qty);
 		} else if (toolType.equals("np-hammer")) {
-			NextPrimeHammer tool = new NextPrimeHammer();
-			warehouse.addTool(tool, qty);
+			NextPrimeHammer t2 = new NextPrimeHammer();
+			warehouse.addTool(t2, qty);
 		} else if (toolType.equals("rs-pliers")) {
-			RandomSumPliers tool = new RandomSumPliers();
-			warehouse.addTool(tool, qty);
+			RandomSumPliers t3 = new RandomSumPliers();
+			warehouse.addTool(t3, qty);
 		}
 	}
 
 	private static void Series(Series SeriesObj) {
 
 		//create new WorkStealingThreadPool
-		WorkStealingThreadPool workStealingThreadPoolTmp = new WorkStealingThreadPool(SeriesObj.getThreads());
-		Simulator.attachWorkStealingThreadPool(workStealingThreadPoolTmp);
+		WorkStealingThreadPool workStealing= new WorkStealingThreadPool(SeriesObj.getThreads());
+		Simulator.attachWorkStealingThreadPool(workStealing);
 
 		warehouse = new Warehouse();
 		waves = new ArrayList<>();
@@ -133,21 +131,19 @@ public class Simulator {
 		warehouse.addPlan(plan);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		try
 		{
-			String jasonFile = args[0];
-			Gson newGson = new Gson();
-			Gson newGson1 = new Gson();
-
-			BufferedReader br = new BufferedReader(new FileReader(jasonFile));
-			Series obj = newGson.fromJson(br, Series.class);
+			String jasonFileLocation = args[0];
+			Gson gson = new Gson();
+			BufferedReader br = new BufferedReader(new FileReader(jasonFileLocation));
+			Series obj = gson.fromJson(br, Series.class);
 			Series(obj);
-
-			ConcurrentLinkedQueue<Product> simulationResult;
+     		ConcurrentLinkedQueue<Product> simulationResult;
 			simulationResult = Simulator.start();
-			FileOutputStream stream = new FileOutputStream("result.ser");
-			ObjectOutputStream oos = new ObjectOutputStream(stream);
+			System.out.println(simulationResult.size());
+			FileOutputStream file = new FileOutputStream("result.ser");
+			ObjectOutputStream oos = new ObjectOutputStream(file);
 			oos.writeObject(simulationResult);
 			oos.close();
 			br.close();
