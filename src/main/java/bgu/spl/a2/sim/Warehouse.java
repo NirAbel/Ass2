@@ -97,26 +97,36 @@ public class Warehouse {
         switch (tool.getType()) {
             case "rs-pliers":{
                 Deferred<Tool> toolDeferred=rsDeferreds.poll();
-                if(toolDeferred!=null)
+                if(toolDeferred!=null) {
                     toolDeferred.resolve(tool);
-                else
-                    rsPliers.addLast((RandomSumPliers)tool);
+                    break;
+                }
+                else {
+                    rsPliers.addLast((RandomSumPliers) tool);
+                    break;
+                }
             }
-
             case "np-hammer":{
                 Deferred<Tool> toolDeferred=npDeferreds.poll();
-                if(toolDeferred!=null)
+                if(toolDeferred!=null) {
                     toolDeferred.resolve(tool);
-                else
-                    npHammers.addLast((NextPrimeHammer)tool);
+                    break;
+                }
+                else {
+                    npHammers.addLast((NextPrimeHammer) tool);
+                    break;
+                }
             }
-
             case "gs-driver":{
                 Deferred<Tool> toolDeferred=gcdDeferreds.poll();
-                if(toolDeferred!=null)
+                if(toolDeferred!=null) {
                     toolDeferred.resolve(tool);
-                else
-                    gsDrivers.addLast((GcdScrewDriver)tool);
+                    break;
+                }
+                else {
+                    gsDrivers.addLast((GcdScrewDriver) tool);
+                    break;
+                }
             }
             default:
                 throw new NoSuchElementException("no such tools");

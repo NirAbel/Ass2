@@ -54,6 +54,11 @@ public class Simulator {
 		{
 			e.printStackTrace();
 		}
+
+		for(Product p : manProducts){
+			System.out.println(p.getStartId() + " " +p.getFinalId());
+		}
+
 		return manProducts;
 	}
 
@@ -137,7 +142,6 @@ public class Simulator {
 			String jsonFile = args[0];
 			Gson gson = new Gson();
 			BufferedReader br = new BufferedReader(new FileReader(jsonFile));
-//			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\user\\IdeaProjects\\Ass2\\simulation.json"));//jsonFile));
 			Series obj = gson.fromJson(br, Series.class);
 			Series(obj);
      		ConcurrentLinkedQueue<Product> simulationResult;
