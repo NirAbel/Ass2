@@ -156,9 +156,9 @@ public class Simulator {
 	public static void main(String[] args) throws InterruptedException {
 		try
 		{
-			String jsonFile = args[0];
+//			String jsonFile = args[0];
 			Gson gson = new Gson();
-			BufferedReader br = new BufferedReader(new FileReader(jsonFile));
+			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\win10\\IdeaProjects\\Ass2\\ax1.json"));
 			Series obj = gson.fromJson(br, Series.class);
 			Series(obj);
      		ConcurrentLinkedQueue<Product> simulationResult;
