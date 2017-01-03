@@ -21,7 +21,6 @@ public abstract class Task<R> {
     private AtomicInteger numTaskWaitingFor = new AtomicInteger(0);
     private Deferred<R> deferred = new Deferred<>();
     private boolean started = false;
-    private final Object lockNumOfTask = new Object();
 
     /**
      * start handling the task - note that this method is protected, a handler
@@ -78,8 +77,6 @@ public abstract class Task<R> {
      */
     protected final void whenResolved(Collection<? extends Task<?>> tasks, Runnable callback) {
         Callback = callback;
-
-
         for (Task task : tasks) {
             task.getResult().whenResolved(() -> {
                             if (numTaskWaitingFor.incrementAndGet()==tasks.size())

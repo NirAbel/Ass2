@@ -22,15 +22,27 @@ public class VersionMonitor {
     private AtomicInteger versionNumber = new AtomicInteger(0);
     public int version;
 
+    /**returns the versionMonitor number
+     *
+     * @return the versionNumber
+     */
     public int getVersion() {
         return versionNumber.get();
     }
 
+    /**increase the versionNumber by one
+     *
+     */
     synchronized public void inc() {
         versionNumber.incrementAndGet();
         notifyAll();
     }
 
+    /**waits until the versionNumber changes
+     *
+     * @param version
+     * @throws InterruptedException
+     */
     synchronized public void await(int version) throws InterruptedException {
         while (version==versionNumber.get()){
             wait();

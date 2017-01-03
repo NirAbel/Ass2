@@ -1,5 +1,4 @@
 package bgu.spl.a2;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.ArrayList;
 import java.util.*;
 
@@ -30,7 +29,6 @@ public class WorkStealingThreadPool {
      * thread pool
      */
 
- //   ArrayList<ConcurrentLinkedDeque<Task<?>>> tasksQueues;
     private Processor[] processors;
     private ArrayList<Thread> threads;
     private VersionMonitor versionMonitor;
@@ -91,9 +89,19 @@ public class WorkStealingThreadPool {
             t1.start();
         }
     }
+
+    /**
+     * returns the VersionMonitor
+     * @return versionMonitor
+     */
     public VersionMonitor getVersionMonitor(){
         return versionMonitor;
     }
+
+    /**
+     * returns the processors array
+     * @return processors
+     */
     public Processor[] getProcessors(){
         return processors;
     }

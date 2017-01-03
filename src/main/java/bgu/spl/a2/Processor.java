@@ -1,7 +1,5 @@
 package bgu.spl.a2;
 
-import java.util.LinkedList;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
@@ -60,16 +58,19 @@ public class Processor implements Runnable {
         }
     }
 
+    /**steals half of the tasks of another processor (if available)
+     *
+     * @throws InterruptedException
+     */
     private void stealTheTasks() throws InterruptedException {
-
         int numberOfProccesorToStealFrom;
         Processor proccesorToStealFrom;
         int currVersionMonitorNumber = pool.getVersionMonitor().getVersion();
         boolean isFound = false;
-        boolean checkAgain = true;
-        while (checkAgain && !isFound) {
+        boolean checkAgain = true;//boolean to check if the versionMonitor number changed
+        while (checkAgain && !isFound) {//checks if we found proccesor to steal from or if the versionMonitor number changed
             checkAgain = false;
-            if (id == (pool.getProcessors().length) - 1)//checks if its the last proccesor in the array
+            if (id == (pool.getProcessors().length) - 1)//checks if its the last processor in the array
                 numberOfProccesorToStealFrom = 0;
             else
                 numberOfProccesorToStealFrom = id + 1;
@@ -99,22 +100,13 @@ public class Processor implements Runnable {
             pool.getVersionMonitor().await(currVersionMonitorNumber);
         }
     }
+
+    /**adds a task to the proccesor
+     *
+     * @param task - the given task to add
+     */
     void addTask(Task<?> task) {
         tasksQueues.addFirst(task);
         pool.getVersionMonitor().inc();
     }
-
-    WorkStealingThreadPool getPool() {
-        return pool;
-    }
-
-    public LinkedBlockingDeque getTasks() {
-        return tasksQueues;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-
 }

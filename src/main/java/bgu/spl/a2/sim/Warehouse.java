@@ -61,7 +61,6 @@ public class Warehouse {
                 }
                 return toolDeferred;
             }
-
             case "np-hammer":{
                 Tool t = npHammers.poll();
                 if(t!=null){
@@ -72,7 +71,6 @@ public class Warehouse {
                 }
                 return toolDeferred;
             }
-
             case "gs-driver":{
                 Tool t = gsDrivers.poll();
                 if(t!=null){
@@ -93,7 +91,6 @@ public class Warehouse {
 	* @param tool - The tool to be returned
 	*/
     public synchronized void releaseTool(Tool tool){
-        //TODO:check if need to add locks and synchronized
         switch (tool.getType()) {
             case "rs-pliers":{
                 Deferred<Tool> toolDeferred=rsDeferreds.poll();
@@ -132,7 +129,6 @@ public class Warehouse {
                 throw new NoSuchElementException("no such tools");
         }
     }
-
 	
 	/**
 	* Getter for ManufactoringPlans
@@ -181,5 +177,4 @@ public class Warehouse {
                 throw new NoSuchElementException("no such tools");
         }
     }
-
 }

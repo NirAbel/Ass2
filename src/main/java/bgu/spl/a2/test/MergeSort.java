@@ -13,32 +13,30 @@ import java.util.concurrent.CountDownLatch;
 
 public class MergeSort extends Task<int[]> {
 
-    private final int[] array;
+    private final int[] arr;
 
     public MergeSort(int[] array) {
-        this.array = array;
+        this.arr = array;
     }
 
     @Override
     protected void start() {
-//    System.out.println("Array length is " +array.length);
-        if (array.length == 1) {
-            complete(array);
+        if (arr.length == 1) {
+            complete(arr);
         } else {
+            int[] arr1 = new int[(arr.length + 1) / 2];
+            int[] arr2 = new int[arr.length / 2];
             List<MergeSort> tasks = new ArrayList<>();
-
-            int[] array1 = new int[(array.length + 1) / 2];
-            int[] array2 = new int[array.length / 2];
-            for (int i = 0; i < array.length; i++)
-                if (i < array1.length)
-                    array1[i] = array[i];
+            for (int i = 0; i < arr.length; i++)
+                if (i < arr1.length)
+                    arr1[i] = arr[i];
                 else
-                    array2[i - array1.length] = array[i];
+                    arr2[i - arr1.length] = arr[i];
 
-            MergeSort newTask1 = new MergeSort(array1);
+            MergeSort newTask1 = new MergeSort(arr1);
             spawn(newTask1);
             tasks.add(newTask1);
-            MergeSort newTask2 = new MergeSort(array2);
+            MergeSort newTask2 = new MergeSort(arr2);
             spawn(newTask2);
             tasks.add(newTask2);
 
@@ -78,7 +76,7 @@ public class MergeSort extends Task<int[]> {
     public static void main(String[] args) throws InterruptedException {
         for (int j = 0; j <1000; j++) {
             WorkStealingThreadPool pool = new WorkStealingThreadPool(4);
-            int n = 100000; //you may check on different number of elements if you like
+            int n = 100000;
             int[] array = new Random().ints(n).toArray();
 
             MergeSort task = new MergeSort(array);

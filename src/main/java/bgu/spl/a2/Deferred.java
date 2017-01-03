@@ -1,6 +1,4 @@
 package bgu.spl.a2;
-
-import java.util.ArrayList;
 /**
  * this class represents a deferred result i.e., an object that eventually will
  * be resolved to hold a result of some operation, the class allows for getting

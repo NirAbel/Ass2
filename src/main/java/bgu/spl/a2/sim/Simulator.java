@@ -146,7 +146,7 @@ public class Simulator {
 			Series(obj);
      		ConcurrentLinkedQueue<Product> simulationResult;
 			simulationResult = Simulator.start();
-			System.out.println(simulationResult.size());
+			//System.out.println(simulationResult.size());
 			FileOutputStream file = new FileOutputStream("result.ser");
 			ObjectOutputStream oos = new ObjectOutputStream(file);
 			oos.writeObject(simulationResult);
