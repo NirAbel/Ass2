@@ -3,10 +3,7 @@ package bgu.spl.a2.sim.json;
 import java.util.List;
 
 public class Wave {
-
-
     private List<Order> orders = null;
-
     /**
      *
      * @param orders

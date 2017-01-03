@@ -63,9 +63,9 @@ import java.util.concurrent.CountDownLatch;
 
                 toolDeferred.whenResolved(() -> {
                     toolResults.add(toolDeferred.get().useOn(product));
-//                    warehouse.releaseTool(toolDeferred.get());
-                    ToolTask toolTask=new ToolTask(warehouse,toolDeferred.get());
-                    spawn(toolTask);
+                    warehouse.releaseTool(toolDeferred.get());
+//                    ToolTask toolTask=new ToolTask(warehouse,toolDeferred.get());
+//                    spawn(toolTask);
                     countDownLatch.countDown();
                 });
             }

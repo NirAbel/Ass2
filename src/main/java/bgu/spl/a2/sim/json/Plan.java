@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Plan {
-
     @SerializedName("product")
     @Expose
     private String product;

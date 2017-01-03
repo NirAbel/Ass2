@@ -13,20 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 import bgu.spl.a2.sim.json.Wave;
 import bgu.spl.a2.sim.json.Order;
+
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-
-
 
 /**
  * A class describing the simulator for part 2 of the assignment
  */
 public class Simulator {
-
 	private static WorkStealingThreadPool workStealingThreadPool;
-	private static List<Wave> waves;
 	private static Warehouse warehouse;
+	private static List<Wave> waves;
+
 
 	/**
 	 * Begin the simulation
@@ -65,9 +65,11 @@ public class Simulator {
 		int count=0;
 		for (Order order : wave.getOrders())
 		{
-			for (int i = 0; i < order.getQty(); i++) {
+			int i=0;
+			while(i<order.getQty()){
 				productList.add(new Product(order.getStartId() + i, order.getProduct()));
-				count++;
+				count=count+1;
+				i++;
 			}
 		}
 		return productList;
@@ -81,53 +83,73 @@ public class Simulator {
 	public static void attachWorkStealingThreadPool(WorkStealingThreadPool myWorkStealingThreadPool) {
 		workStealingThreadPool = myWorkStealingThreadPool;
 	}
+
+	/**
+	 * add new tool to the Warehouse
+	 * @param toolType
+	 * @param qty
+	 */
 	private static void addTool(String toolType, int qty) {
-		if (toolType.equals("gs-driver")) {
-			GcdScrewDriver t1 = new GcdScrewDriver();
-			warehouse.addTool(t1, qty);
-		} else if (toolType.equals("np-hammer")) {
-			NextPrimeHammer t2 = new NextPrimeHammer();
-			warehouse.addTool(t2, qty);
-		} else if (toolType.equals("rs-pliers")) {
-			RandomSumPliers t3 = new RandomSumPliers();
-			warehouse.addTool(t3, qty);
+		switch (toolType){
+			case "gs-driver":{
+				GcdScrewDriver t1 = new GcdScrewDriver();
+				warehouse.addTool(t1, qty);
+				break;
+			}
+			case "np-hammer":{
+				NextPrimeHammer t2 = new NextPrimeHammer();
+				warehouse.addTool(t2, qty);
+				break;
+			}
+			case "rs-pliers":{
+				RandomSumPliers t3 = new RandomSumPliers();
+				warehouse.addTool(t3, qty);
+				break;
+			}
+			default:
+				throw new NoSuchElementException("no such tools");
 		}
 	}
 
 	private static void Series(Series SeriesObj) {
-
 		//create new WorkStealingThreadPool
 		WorkStealingThreadPool workStealing= new WorkStealingThreadPool(SeriesObj.getThreads());
 		Simulator.attachWorkStealingThreadPool(workStealing);
-
 		warehouse = new Warehouse();
 		waves = new ArrayList<>();
-		//this func is adding tool to wareHouse
-		for (int i = 0; i < SeriesObj.getTools().size(); i++) {
-			addTool(SeriesObj.getTools().get(i).getTool(), SeriesObj.getTools().get(i).getQty());
-		}
 
 		//this func is adding plan to wareHouse
 		for (int i = 0; i < SeriesObj.getPlans().size(); i++) {
 			addPlan(SeriesObj, i);
 		}
+		//this func is adding tool to wareHouse
+		for (int i = 0; i < SeriesObj.getTools().size(); i++) {
+			addTool(SeriesObj.getTools().get(i).getTool(), SeriesObj.getTools().get(i).getQty());
+		}
+		addWave(SeriesObj);
+	}
 
-		//this func is adding another Wave to Wave List
+	/**
+	 * this func is adding another Wave to Wave List
+	 * @param SeriesObj
+	 */
+	private static void addWave(Series SeriesObj) {
 		Wave wave;
-		int size = SeriesObj.getWaves().size();
-		for (int i = 0; i < size; i++) {
+		int sizeOfSeriesObj = SeriesObj.getWaves().size();
+		for (int i = 0; i < sizeOfSeriesObj; i++) {
 			wave = new Wave(SeriesObj.getWaves().get(i));
 			waves.add(wave);
 		}
 	}
 
-	//this func is adding plan to wareHouse
+	/**
+	 * this func is adding plan to wareHouse
+	 * @param obj
+	 * @param i
+	 */
 	private static void addPlan(Series obj, int i) {
 		ManufactoringPlan plan;
-		String product = obj.getPlans().get(i).getProduct();
-		String[] parts = obj.getPlans().get(i).getParts();
-		String[] tools = obj.getPlans().get(i).getTools();
-		plan = new ManufactoringPlan(product, parts, tools);
+		plan = new ManufactoringPlan(obj.getPlans().get(i).getProduct(),obj.getPlans().get(i).getParts(), obj.getPlans().get(i).getTools());
 		warehouse.addPlan(plan);
 	}
 
