@@ -12,18 +12,34 @@ public class ToolJson {
     @Expose
     private Integer qty;
 
+    /**
+     *
+     * @return tool
+     */
     public String getTool() {
         return tool;
     }
 
+    /**
+     *
+     * @param tool
+     */
     public void setTool(String tool) {
         this.tool = tool;
     }
 
+    /**
+     *
+     * @return Qty
+     */
     public Integer getQty() {
         return qty;
     }
 
+    /**
+     *
+     * @param qty
+     */
     public void setQty(Integer qty) {
         this.qty = qty;
     }

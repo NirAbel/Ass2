@@ -20,30 +20,58 @@ public class Series {
     @Expose
     private List<List<Order>> waves = null;
 
+    /**
+     *
+     * @return the threads
+     */
     public Integer getThreads() {
         return threads;
     }
 
+    /**
+     *
+     * @param threads
+     */
     public void setThreads(Integer threads) {
         this.threads = threads;
     }
 
+    /**
+     *
+     * @return the waves
+     */
     public List<List<Order>> getWaves() {
         return waves;
     }
 
+    /**
+     *
+     * @return the tools
+     */
     public List<ToolJson> getTools() {
         return tools;
     }
 
+    /**
+     *
+     * @param tools
+     */
     public void setTools(List<ToolJson> tools) {
         this.tools = tools;
     }
 
+    /**
+     *
+     * @param plans
+     */
     public void setPlans(List<Plan> plans) {
         this.plans = plans;
     }
 
+    /**
+     *
+     * @return plans
+     */
     public List<Plan> getPlans() {
         return plans;
     }

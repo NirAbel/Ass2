@@ -27,7 +27,6 @@ public class Simulator {
 	private static WorkStealingThreadPool workStealingThreadPool;
 	private static List<Wave> waves;
 	private static Warehouse warehouse;
-	private static String filePath;
 
 	/**
 	 * Begin the simulation
