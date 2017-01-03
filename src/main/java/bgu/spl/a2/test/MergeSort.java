@@ -12,9 +12,7 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public class MergeSort extends Task<int[]> {
-
     private final int[] arr;
-
     public MergeSort(int[] array) {
         this.arr = array;
     }
@@ -24,15 +22,19 @@ public class MergeSort extends Task<int[]> {
         if (arr.length == 1) {
             complete(arr);
         } else {
-            int[] arr1 = new int[(arr.length + 1) / 2];
-            int[] arr2 = new int[arr.length / 2];
+            int size1=(arr.length + 1) / 2;
+            int size2=arr.length / 2;
+            int[] arr1 = new int[size1];
+            int[] arr2 = new int[size2];
             List<MergeSort> tasks = new ArrayList<>();
-            for (int i = 0; i < arr.length; i++)
-                if (i < arr1.length)
-                    arr1[i] = arr[i];
+            int count=0;
+            while(count<arr.length){
+                if (count < arr1.length)
+                    arr1[count] = arr[count];
                 else
-                    arr2[i - arr1.length] = arr[i];
-
+                    arr2[count - arr1.length] = arr[count];
+                count++;
+            }
             MergeSort newTask1 = new MergeSort(arr1);
             spawn(newTask1);
             tasks.add(newTask1);
@@ -85,9 +87,6 @@ public class MergeSort extends Task<int[]> {
             pool.start();
             pool.submit(task);
             task.getResult().whenResolved(() -> {
-                //warning - a large print!! - you can remove this line if you wish
-                //System.out.println(Arrays.toString(task.getResult().get()));
-                /******* debug ***********/
                 boolean ans = true;
                 int length = task.getResult().get().length;
                 for (int i = 1; i < length; i++) {
@@ -97,7 +96,6 @@ public class MergeSort extends Task<int[]> {
                     }
                 }
                 System.out.println(ans);
-                /*************************/
                 l.countDown();
             });
 

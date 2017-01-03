@@ -5,8 +5,8 @@ import bgu.spl.a2.sim.Warehouse;
 import bgu.spl.a2.sim.tools.Tool;
 
 public class ToolTask extends Task<Tool> {
-    Warehouse warehouse;
     Tool tool;
+    Warehouse warehouse;
 
     ToolTask(Warehouse w, Tool t){
         warehouse=w;
