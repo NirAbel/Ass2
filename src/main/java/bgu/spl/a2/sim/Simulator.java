@@ -53,11 +53,9 @@ public class Simulator {
 		{
 			e.printStackTrace();
 		}
-
 		for(Product p : manProducts){
 			System.out.println(p.getStartId() + " " +p.getFinalId());
 		}
-
 		return manProducts;
 	}
 
@@ -72,7 +70,6 @@ public class Simulator {
 				count++;
 			}
 		}
-
 		return productList;
 	}
 
@@ -84,7 +81,6 @@ public class Simulator {
 	public static void attachWorkStealingThreadPool(WorkStealingThreadPool myWorkStealingThreadPool) {
 		workStealingThreadPool = myWorkStealingThreadPool;
 	}
-
 	private static void addTool(String toolType, int qty) {
 		if (toolType.equals("gs-driver")) {
 			GcdScrewDriver t1 = new GcdScrewDriver();
