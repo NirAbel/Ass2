@@ -46,54 +46,55 @@ public class MergeSort extends Task<int[]> {
                 int[] left = tasks.get(0).getResult().get();
                 int[] right = tasks.get(1).getResult().get();
 
-                int[] newArray = new int[left.length + right.length];
+                int[] newArr = new int[left.length + right.length];
 
                 int i = 0, j = 0, k = 0;
-
-                while (i < left.length && j < right.length) {
+                int leftLength=left.length;
+                int rightLength=right.length;
+                while (i < leftLength && j < rightLength) {
                     if (left[i] < right[j]) {
-                        newArray[k] = left[i];
+                        newArr[k] = left[i];
                         i++;
                     } else {
-                        newArray[k] = right[j];
+                        newArr[k] = right[j];
                         j++;
                     }
                     k++;
                 }
-                while (i < left.length) {
-                    newArray[k] = left[i];
+                while (i <leftLength) {
+                    newArr[k] = left[i];
                     i++;
                     k++;
                 }
-                while (j < right.length) {
-                    newArray[k] = right[j];
+                while (j <rightLength) {
+                    newArr[k] = right[j];
                     j++;
                     k++;
                 }
-                complete(newArray);
+                complete(newArr);
             });
         }
     }
 
     public static void main(String[] args) throws InterruptedException {
         for (int j = 0; j <1000; j++) {
-            WorkStealingThreadPool pool = new WorkStealingThreadPool(4);
             int n = 100000;
-            int[] array = new Random().ints(n).toArray();
-
-            MergeSort task = new MergeSort(array);
-
+            int[] arr = new Random().ints(n).toArray();
+            WorkStealingThreadPool pool = new WorkStealingThreadPool(4);
+            MergeSort task = new MergeSort(arr);
             CountDownLatch l = new CountDownLatch(1);
             pool.start();
             pool.submit(task);
             task.getResult().whenResolved(() -> {
                 boolean ans = true;
                 int length = task.getResult().get().length;
-                for (int i = 1; i < length; i++) {
-                    if (task.getResult().get()[i] < task.getResult().get()[i - 1]) {
+                int count=1;
+                while(count<length){
+                    if (task.getResult().get()[count] < task.getResult().get()[count - 1]) {
                         ans = false;
                         break;
                     }
+                    count++;
                 }
                 System.out.println(ans);
                 l.countDown();
@@ -103,5 +104,4 @@ public class MergeSort extends Task<int[]> {
             pool.shutdown();
         }
     }
-
 }

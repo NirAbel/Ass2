@@ -83,22 +83,18 @@ public class Processor implements Runnable {
                     for (int i = 0; i < numberOfTasksToSteal && proccesorToStealFrom.tasksQueues.size() > 1; i++) {
                         Task t = proccesorToStealFrom.tasksQueues.pollLast();
                         if (t != null) {
-                            this.tasksQueues.addLast(t);
-                        }
+                            this.tasksQueues.addLast(t);}
                     }
                 } else {
                     if (numberOfProccesorToStealFrom == (pool.getProcessors().length) - 1) {
                         numberOfProccesorToStealFrom = 0;
                     } else
-                        numberOfProccesorToStealFrom = numberOfProccesorToStealFrom + 1;
-                }
+                        numberOfProccesorToStealFrom = numberOfProccesorToStealFrom + 1;}
                 if (currVersionMonitorNumber != pool.getVersionMonitor().getVersion())
-                    checkAgain = true;
-            }
+                    checkAgain = true;}
         }
         if (this.tasksQueues.size() == 0) {
-            pool.getVersionMonitor().await(currVersionMonitorNumber);
-        }
+            pool.getVersionMonitor().await(currVersionMonitorNumber);}
     }
 
     /**adds a task to the proccesor

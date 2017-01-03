@@ -54,36 +54,29 @@ public class Warehouse {
             case "rs-pliers":{
                 Tool t = rsPliers.poll();
                 if(t!=null){
-                    toolDeferred.resolve(t);
-                }
+                    toolDeferred.resolve(t);}
                 else{
-                    rsDeferreds.add(toolDeferred);
-                }
+                    rsDeferreds.add(toolDeferred);}
                 return toolDeferred;
             }
             case "np-hammer":{
                 Tool t = npHammers.poll();
                 if(t!=null){
-                    toolDeferred.resolve(t);
-                }
+                    toolDeferred.resolve(t);}
                 else{
-                    npDeferreds.add(toolDeferred);
-                }
+                    npDeferreds.add(toolDeferred);}
                 return toolDeferred;
             }
             case "gs-driver":{
                 Tool t = gsDrivers.poll();
                 if(t!=null){
-                    toolDeferred.resolve(t);
-                }
+                    toolDeferred.resolve(t);}
                 else{
-                    gcdDeferreds.add(toolDeferred);
-                }
+                    gcdDeferreds.add(toolDeferred);}
                 return toolDeferred;
             }
             default:
-                throw new NoSuchElementException("no such tools");
-        }
+                throw new NoSuchElementException("no such tools");}
     }
 
 	/**
@@ -96,38 +89,31 @@ public class Warehouse {
                 Deferred<Tool> toolDeferred=rsDeferreds.poll();
                 if(toolDeferred!=null) {
                     toolDeferred.resolve(tool);
-                    break;
-                }
+                    break;}
                 else {
                     rsPliers.addLast((RandomSumPliers) tool);
-                    break;
-                }
+                    break;}
             }
             case "np-hammer":{
                 Deferred<Tool> toolDeferred=npDeferreds.poll();
                 if(toolDeferred!=null) {
                     toolDeferred.resolve(tool);
-                    break;
-                }
+                    break;}
                 else {
                     npHammers.addLast((NextPrimeHammer) tool);
-                    break;
-                }
+                    break;}
             }
             case "gs-driver":{
                 Deferred<Tool> toolDeferred=gcdDeferreds.poll();
                 if(toolDeferred!=null) {
                     toolDeferred.resolve(tool);
-                    break;
-                }
+                    break;}
                 else {
                     gsDrivers.addLast((GcdScrewDriver) tool);
-                    break;
-                }
+                    break;}
             }
             default:
-                throw new NoSuchElementException("no such tools");
-        }
+                throw new NoSuchElementException("no such tools");}
     }
 	
 	/**
