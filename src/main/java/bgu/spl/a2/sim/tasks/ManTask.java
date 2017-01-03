@@ -21,6 +21,9 @@ import java.util.concurrent.CountDownLatch;
             this.warehouse = warehouse;
         }
 
+        /**
+         * start for manufactoringPlan class
+         */
         protected void start()
         {
             ManufactoringPlan plan = warehouse.getPlan(product.getName());
@@ -43,6 +46,11 @@ import java.util.concurrent.CountDownLatch;
             }
         }
 
+        /**
+         *
+         * @param tools
+         * @return manufacturingTasks
+         */
         private long calcFinalIdOfTools(String[] tools)
         {
             long finalId = 0;
@@ -76,6 +84,11 @@ import java.util.concurrent.CountDownLatch;
             return finalId;
         }
 
+        /**
+         *
+         * @param plans
+         * @return manufacturingTasks
+         */
         private List<ManTask> manfactureParts(String[] plans)
         {
             List<ManTask> manufacturingTasks = new ArrayList<>();
